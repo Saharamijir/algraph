@@ -1,0 +1,15 @@
+query($mediaId: Int) {
+  Media(id: $mediaId) {
+    relations{
+      edges{
+        node{
+          id
+          title{
+            romaji
+          }
+          type
+        }
+      }
+    }
+  }
+}

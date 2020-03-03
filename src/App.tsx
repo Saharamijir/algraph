@@ -1,24 +1,17 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useMemo, useState, useEffect } from 'react';
 import './App.css';
+import { Media } from './models';
+import MediaCarousel from './components/MediaCarousel';
+import * as AnilistService from './services/AnilistService';
 
 function App() {
+  const [media, setMedia] = useState([] as Media[]);
+  useEffect(() => {
+    AnilistService.getAllRelatedMedia({ Id: 1, Title: "" }).then(x => setMedia(x))
+  }, [setMedia]);
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <MediaCarousel mediaList={media} />
     </div>
   );
 }
