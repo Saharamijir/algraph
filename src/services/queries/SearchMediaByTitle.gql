@@ -1,0 +1,13 @@
+query($title: String, $perPage: Int, $pageNumber: Int) {
+  Page(page: $pageNumber, perPage: $perPage) {
+    media(search: $title) {
+      id
+      title {
+        romaji
+        english
+        native
+        userPreferred
+      }
+    }
+  }
+}

@@ -1,11 +1,14 @@
 query($mediaId: Int) {
   Media(id: $mediaId) {
-    relations{
-      edges{
-        node{
+    relations {
+      edges {
+        node {
           id
-          title{
+          title {
             romaji
+            english
+            native
+            userPreferred
           }
           type
         }

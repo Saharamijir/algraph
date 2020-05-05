@@ -1,5 +1,5 @@
-import { Media } from "../models";
-import { getRelatedMediaQuery } from "./GraphqlQueriesService";
+import { Media, Id, Title } from "../models";
+import { getRelatedMediaQuery, getSearchQuery } from "./GraphqlQueriesService";
 
 const anilistApi = 'https://graphql.anilist.co';
 const options: RequestInit = {
@@ -27,19 +27,30 @@ export const getAllRelatedMedia = async (media: Media) => {
 }
 
 export const getRelatedMedia = async (mediaId: number): Promise<Media[]> => {
-    const mapNodeToMedia = (x: any) : Media => {
-        return {
-            Id: x.id,
-            Title: x.title.romaji
-        };
-    }
-    console.log(getRelatedMediaQuery({ mediaId }));
     const resp = await fetch(anilistApi, { ...options, body: getRelatedMediaQuery({ mediaId }) });
-    console.log(resp);
     return (await resp.json()).data.Media.relations.edges.map((x: any) => mapNodeToMedia(x.node));
 
 }
 
-export const searchForMedia = async (title: string) => {
+export const searchForMedia = async (titleOrId: string | Id): Promise<Media[]> => {
+    const mapResponseToMediaArray = (x: any): Media[] => {
+        if (!!x.data.Page) {
+            return x.data.Page.media.map(mapNodeToMedia);
+        }
+        return [mapNodeToMedia(x.data.Media)];
+    }
+    const resp = await fetch(anilistApi, { ...options, body: getSearchQuery({ titleOrId: titleOrId, pageNumber: 1, perPage: 1 }) });
+    return mapResponseToMediaArray(await resp.json());
+}
 
+const mapNodeToMedia = (x: any) : Media => {
+    return {
+        Id: x.id,
+        Title: {
+            UserPrefered: x.title.userPrefered,
+            English: x.title.english,
+            Native: x.title.native,
+            Romaji: x.title.romaji
+        }
+    };
 }

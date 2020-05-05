@@ -1,4 +1,7 @@
+import { Title } from "./Title";
+import { Id } from "./Id";
+
 export interface Media{
-    Title: string,
-    Id: number,
+    Title: Title,
+    Id: Id,
 };
